@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Камінь-Ножиці-Папір</title>
+    <style>
+      :root {
+        --bg: #0a1030;
+        --panel: #0d1440;
+        --panel-alt: #102159;
+        --hover-bg: #16327b;
+        --text-main: #d6ecff;
+        --text-soft: #a9dcff;
+        --title: #78c7ff;
+        --accent: #4fa7ff;
+        --shadow-accent: rgba(79, 167, 255, 0.25);
+        --title-glow: rgba(120, 199, 255, 0.6);
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text-main);
+        font-family: Arial, sans-serif;
+        font-size: 18px;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100dvh;
+      }
+      main {
+        background: var(--panel);
+        border: 2px solid var(--accent);
+        border-radius: 6px;
+        box-shadow: 0 0 10px var(--shadow-accent);
+        padding: 1.5rem;
+        width: 80%;
+        max-width: 700px;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      h1 {
+        color: var(--title);
+        letter-spacing: 3px;
+        text-shadow: 0 0 8px var(--title-glow);
+      }
+      button {
+        cursor: pointer;
+        font: inherit;
+        font-family: "Press Start 2P", monospace;
+        background: var(--panel-alt);
+        color: var(--text-main);
+        border: 2px outset var(--accent);
+        border-radius: 6px;
+        padding: 10px 16px;
+        margin: 0 5px;
+        min-width: 130px;
+        transition: 0.2s ease;
+      }
+      button:hover {
+        background: var(--hover-bg);
+        color: var(--text-soft);
+      }
+      button:active {
+        transform: scale(0.97);
+      }
+      @media (max-width: 600px) {
+        body {
+          font-size: 14px;
+          line-height: 1.4;
+        }
+        main {
+          min-height: 420px;
+        }
+        h1 {
+          font-size: 25px;
+        }
+        button {
+          width: 100%;
+          margin: 10px 0;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main>
+      <h1>Камінь-Ножиці-Папір</h1>
+
+      <!-- Кнопки з вибором гравця -->
+      <div>
+        <button onclick="play('💎 Камінь')">💎 Камінь</button>
+        <button onclick="play('✂ Ножиці')">✂ Ножиці</button>
+        <button onclick="play('📜 Папір')">📜 Папір</button>
+      </div>
+
+      <!-- Виведення результату -->
+      <div id="message">Зробіть свій вибір.</div>
+    </main>
+
+    <script>
+      // --- ЛОГІКА ГРИ ---
+
+      function play(playerChoice) {
+        // Масив доступних варіантів
+        const choices = ["💎 Камінь", "✂ Ножиці", "📜 Папір"];
+
+        // Випадковий вибір комп'ютера
+        const computerChoice = choices[Math.floor(Math.random() * 3)];
+
+        // Базове повідомлення
+        let result = `Ви обрали ${playerChoice}. Комп'ютер обрав ${computerChoice}. `;
+
+        // Визначення переможця
+        if (playerChoice === computerChoice) {
+          result += "Нічия!";
+        } else if (
+          (playerChoice === "💎 Камінь" && computerChoice === "✂ Ножиці") ||
+          (playerChoice === "✂ Ножиці" && computerChoice === "📜 Папір") ||
+          (playerChoice === "📜 Папір" && computerChoice === "💎 Камінь")
+        ) {
+          result += "Ви перемогли!";
+        } else {
+          result += "Переміг комп'ютер!";
+        }
+
+        // Виведення результату в інтерфейс
+        document.getElementById("message").innerText = result;
+      }
+    </script>
+  </body>
+</html>

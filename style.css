@@ -166,6 +166,14 @@ li::marker {
   color: var(--accent);
 }
 
+.lesson-links {
+  list-style: none;
+  padding-left: 0;
+  line-height: 1.7;
+  letter-spacing: 1px;
+  font-size: 18px;
+}
+
 .flex-ol {
   display: flex;
   justify-content: space-evenly;
@@ -220,6 +228,13 @@ a {
 a:hover {
   color: var(--title);
   text-decoration: underline;
+}
+
+img {
+  display: block;
+  width: 100%;
+  border: 3px solid var(--panel-alt);
+  border-radius: 8px;
 }
 
 /* RESPONSIVE */
