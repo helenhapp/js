@@ -19,7 +19,7 @@ document.querySelectorAll(".accordion__header").forEach((header) => {
     item.classList.toggle("active");
 
     content.style.maxHeight = item.classList.contains("active")
-      ? content.scrollHeight + "px"
+      ? content.scrollHeight + 36 + "px"
       : null;
   });
 });
