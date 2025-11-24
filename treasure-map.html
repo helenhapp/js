@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Пошук Скарбів</title>
+    <link rel="icon" type="image/x-icon" href="./images/favicon.ico" />
+    <style>
+      :root {
+        --bg: #0a1030;
+        --panel: #0d1440;
+        --panel-alt: #102159;
+        --hover-bg: #16327b;
+        --text-main: #d6ecff;
+        --text-soft: #a9dcff;
+        --title: #78c7ff;
+        --accent: #4fa7ff;
+        --shadow-accent: rgba(79, 167, 255, 0.25);
+        --title-glow: rgba(120, 199, 255, 0.6);
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text-main);
+        font-family: Arial, sans-serif;
+        font-size: 18px;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100dvh;
+      }
+      main {
+        background: var(--panel);
+        border: 2px solid var(--accent);
+        border-radius: 6px;
+        box-shadow: 0 0 10px var(--shadow-accent);
+        padding: 1.5rem;
+        width: 85%;
+        max-width: 650px;
+        min-height: 400px;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      h1 {
+        color: var(--title);
+        letter-spacing: 3px;
+        text-shadow: 0 0 8px var(--title-glow);
+      }
+      @media (max-width: 600px) {
+        body {
+          font-size: 16px;
+          line-height: 1.4;
+        }
+        main {
+          min-height: 420px;
+          width: 90%;
+        }
+        h1 {
+          font-size: 28px;
+        }
+      }
+      #map {
+        margin: 0 auto;
+      }
+      .row {
+        display: flex;
+      }
+      .cell {
+        cursor: pointer;
+        width: 45px;
+        height: 45px;
+        margin: 4px;
+        border: 2px solid var(--accent);
+        border-radius: 2px;
+        box-shadow: 0 0 10px var(--shadow-accent);
+        background: var(--panel-alt);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 24px;
+      }
+      .cell:hover {
+        background: var(--hover-bg);
+        transform: scale(1.05);
+      }
+      .cell:active {
+        transform: scale(0.95);
+      }
+      #attempts {
+        color: var(--accent);
+        font-weight: bold;
+      }
+    </style>
+  </head>
+
+  <body>
+    <main>
+      <h1>Пошук Скарбів</h1>
+
+      <div id="map"></div>
+
+      <div id="message">Знайдіть, де захований скарб 💎.</div>
+      <div>
+        Залишилося спроб:
+        <span id="attempts"></span>
+      </div>
+    </main>
+
+    <script>
+      const size = 4;
+      let attempts = size * 2;
+      let found = false;
+      const map = document.getElementById("map");
+      const message = document.getElementById("message");
+      const attemptsSpan = document.getElementById("attempts");
+      const matrix = [];
+      attemptsSpan.innerText = attempts;
+
+      // --- створюємо карту ---
+      for (let i = 0; i < size; i++) {
+        const row = document.createElement("div");
+        row.classList.add("row");
+
+        const rowCells = [];
+
+        for (let j = 0; j < size; j++) {
+          const cell = document.createElement("div");
+          cell.classList.add("cell");
+
+          cell.onclick = function () {
+            handleClick(i, j);
+          };
+
+          row.appendChild(cell);
+          rowCells.push(cell);
+        }
+
+        matrix.push(rowCells);
+        map.appendChild(row);
+      }
+
+      // --- випадкова позиція скарбу ---
+      const treasureRow = Math.floor(Math.random() * size);
+      const treasureCol = Math.floor(Math.random() * size);
+
+      // --- натиск на клітинку ---
+      function handleClick(i, j) {
+        if (found) return;
+
+        const cell = matrix[i][j];
+
+        if (cell.innerText) return; // ігноруємо якщо вже натискали
+
+        attempts--;
+        attemptsSpan.innerText = attempts;
+
+        if (i === treasureRow && j === treasureCol) {
+          showTreasure(cell);
+          message.innerText = "Вітаю! Ви знайшли скарб!";
+          found = true;
+          return;
+        }
+
+        cell.innerText = "🍃"; // листочок якщо не вгадали
+
+        if (attempts === 0) {
+          showTreasure(matrix[treasureRow][treasureCol]);
+          message.innerText = "У вас закінчилися спроби :(";
+        }
+      }
+
+      function showTreasure(cell) {
+        cell.innerText = "💎";
+        cell.style.backgroundColor = "#29b6f6";
+      }
+    </script>
+  </body>
+</html>
