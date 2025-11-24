@@ -38,6 +38,11 @@ header {
   font-family: "Press Start 2P";
 }
 
+header h2 {
+  text-align: center;
+  color: #d6ecff;
+}
+
 header .links {
   display: flex;
   justify-content: space-evenly;
@@ -71,6 +76,7 @@ h3 {
 
 h2 {
   font-size: 16px;
+  margin-top: 40px;
 }
 h3 {
   font-size: 14px;
@@ -117,6 +123,12 @@ li {
 
 .accordion__header:hover {
   background: var(--hover-bg);
+}
+
+.accordion__header .star {
+  display: inline-block;
+  font-size: 18px;
+  transform: translateY(-2px);
 }
 
 .acc-arrow {
@@ -168,7 +180,8 @@ ol {
   line-height: 1.6;
 }
 
-ol span {
+ol span,
+.accordion__content span {
   color: var(--text-soft);
   font-weight: bold;
   letter-spacing: 1px;
@@ -179,11 +192,15 @@ li::marker {
 }
 
 .lesson-links {
-  list-style: none;
-  padding-left: 0;
+  list-style-type: square;
+  /* padding-left: 0; */
   line-height: 1.7;
   letter-spacing: 1px;
   font-size: 18px;
+}
+
+.lesson-links li::marker {
+  color: var(--text-main);
 }
 
 .flex-ol {
