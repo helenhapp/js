@@ -113,23 +113,29 @@
     </main>
 
     <script>
-      const size = 4;
-      let attempts = size * 2;
-      let found = false;
+      const game = {
+        size: 4,
+        attempts: 8,
+        found: false,
+        treasure: { row: 0, col: 0 },
+        matrix: [],
+      };
+
       const map = document.getElementById("map");
       const message = document.getElementById("message");
       const attemptsSpan = document.getElementById("attempts");
-      const matrix = [];
-      attemptsSpan.innerText = attempts;
+
+      game.attempts = game.size * 2;
+      attemptsSpan.innerText = game.attempts;
 
       // --- створюємо карту ---
-      for (let i = 0; i < size; i++) {
+      for (let i = 0; i < game.size; i++) {
         const row = document.createElement("div");
         row.classList.add("row");
 
         const rowCells = [];
 
-        for (let j = 0; j < size; j++) {
+        for (let j = 0; j < game.size; j++) {
           const cell = document.createElement("div");
           cell.classList.add("cell");
 
@@ -141,36 +147,36 @@
           rowCells.push(cell);
         }
 
-        matrix.push(rowCells);
+        game.matrix.push(rowCells);
         map.appendChild(row);
       }
 
       // --- випадкова позиція скарбу ---
-      const treasureRow = Math.floor(Math.random() * size);
-      const treasureCol = Math.floor(Math.random() * size);
+      game.treasure.row = Math.floor(Math.random() * game.size);
+      game.treasure.col = Math.floor(Math.random() * game.size);
 
       // --- натиск на клітинку ---
       function handleClick(i, j) {
-        if (found) return;
+        const cell = game.matrix[i][j];
 
-        const cell = matrix[i][j];
+        if (game.found || game.attempts === 0 || cell.innerText) return;
 
-        if (cell.innerText) return; // ігноруємо якщо вже натискали
+        game.attempts--;
+        attemptsSpan.innerText = game.attempts;
 
-        attempts--;
-        attemptsSpan.innerText = attempts;
-
-        if (i === treasureRow && j === treasureCol) {
+        if (i === game.treasure.row && j === game.treasure.col) {
           showTreasure(cell);
           message.innerText = "Вітаю! Ви знайшли скарб!";
-          found = true;
+          game.found = true;
           return;
         }
 
-        cell.innerText = "🍃"; // листочок якщо не вгадали
+        cell.innerText = "🍃";
 
-        if (attempts === 0) {
-          showTreasure(matrix[treasureRow][treasureCol]);
+        if (game.attempts === 0) {
+          const treasureCell =
+            game.matrix[game.treasure.row][game.treasure.col];
+          showTreasure(treasureCell);
           message.innerText = "У вас закінчилися спроби :(";
         }
       }
