@@ -96,9 +96,9 @@
 
       <!-- Кнопки з вибором гравця -->
       <div>
-        <button id="rock">💎 Камінь</button>
-        <button id="scissors">✂ Ножиці</button>
-        <button id="paper">📜 Папір</button>
+        <button id="rock">✊ Камінь</button>
+        <button id="scissors">✌ Ножиці</button>
+        <button id="paper">✋ Папір</button>
       </div>
 
       <!-- Виведення результату -->
@@ -110,7 +110,7 @@
 
       function play(playerChoice) {
         // Масив доступних варіантів
-        const choices = ["💎 Камінь", "✂ Ножиці", "📜 Папір"];
+        const choices = ["✊ Камінь", "✌ Ножиці", "✋ Папір"];
 
         // Випадковий вибір комп'ютера
         const computerChoice = choices[Math.floor(Math.random() * 3)];
@@ -122,9 +122,9 @@
         if (playerChoice === computerChoice) {
           result += "Нічия!";
         } else if (
-          (playerChoice === "💎 Камінь" && computerChoice === "✂ Ножиці") ||
-          (playerChoice === "✂ Ножиці" && computerChoice === "📜 Папір") ||
-          (playerChoice === "📜 Папір" && computerChoice === "💎 Камінь")
+          (playerChoice === "✊ Камінь" && computerChoice === "✌ Ножиці") ||
+          (playerChoice === "✌ Ножиці" && computerChoice === "✋ Папір") ||
+          (playerChoice === "✋ Папір" && computerChoice === "✊ Камінь")
         ) {
           result += "Ви перемогли!";
         } else {
@@ -135,9 +135,15 @@
         document.getElementById("message").innerText = result;
       }
 
-      document.getElementById("rock").addEventListener("click", () => play("💎 Камінь"));
-      document.getElementById("scissors").addEventListener("click", () => play("✂ Ножиці"));
-      document.getElementById("paper").addEventListener("click", () => play("📜 Папір"));
+      document
+        .getElementById("rock")
+        .addEventListener("click", () => play("✊ Камінь"));
+      document
+        .getElementById("scissors")
+        .addEventListener("click", () => play("✌ Ножиці"));
+      document
+        .getElementById("paper")
+        .addEventListener("click", () => play("✋ Папір"));
     </script>
   </body>
 </html>
