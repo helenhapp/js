@@ -104,7 +104,7 @@ li {
    ACCORDION
 =========================== */
 .accordion {
-  margin: 20px auto;
+  margin: 18px auto;
 }
 
 .accordion__item {
@@ -184,7 +184,7 @@ code {
 hr {
   border: none;
   border-top: 2px solid var(--accent);
-  margin: 40px auto;
+  margin: 38px auto;
 }
 
 .accordion__content hr {
