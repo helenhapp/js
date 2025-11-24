@@ -1,4 +1,6 @@
-/* THEME VARIABLES */
+/* ===========================
+   THEME VARIABLES
+=========================== */
 :root {
   /* Backgrounds */
   --bg: #0a1030;
@@ -7,7 +9,7 @@
   --hover-bg: #16327b;
   --code-bg: #0e1a4d;
 
-  /* Text colors */
+  /* Text */
   --text-main: #d6ecff;
   --text-soft: #a9dcff;
   --title: #78c7ff;
@@ -15,7 +17,7 @@
   /* Borders & accents */
   --accent: #4fa7ff;
 
-  /* Effects / shadows */
+  /* Effects */
   --shadow-accent: rgba(79, 167, 255, 0.25);
   --title-glow: rgba(120, 199, 255, 0.6);
 }
@@ -24,10 +26,11 @@
   box-sizing: border-box;
 }
 
-/* BASE */
+/* ===========================
+   BASE
+=========================== */
 body {
   margin: 0;
-
   background-color: var(--bg);
   color: var(--text-main);
   font-family: Arial, sans-serif;
@@ -39,8 +42,7 @@ header {
 }
 
 header h2 {
-  text-align: center;
-  color: #d6ecff;
+  color: var(--text-main);
 }
 
 header .links {
@@ -84,9 +86,11 @@ h2 {
   font-size: 16px;
   margin-top: 40px;
 }
+
 h3 {
   font-size: 14px;
 }
+
 h4 {
   margin: 1.1rem 0;
 }
@@ -96,11 +100,11 @@ li {
   text-align: justify;
 }
 
-/* ACCORDION */
+/* ===========================
+   ACCORDION
+=========================== */
 .accordion,
 .result-img {
-  /* width: 90%; */
-  /* max-width: 900px; */
   margin: 20px auto;
 }
 
@@ -132,7 +136,6 @@ li {
 }
 
 .accordion__header .star {
-  display: inline-block;
   font-size: 18px;
   transform: translateY(-2px);
 }
@@ -140,6 +143,7 @@ li {
 .acc-arrow {
   transition: transform 0.3s ease;
 }
+
 .accordion__item.active .acc-arrow {
   transform: rotate(90deg);
 }
@@ -151,11 +155,14 @@ li {
   line-height: 1.6;
   transition: max-height 0.35s ease, padding 0.3s ease;
 }
+
 .accordion__item.active .accordion__content {
   padding: 18px;
 }
 
-/* CODE BLOCK */
+/* ===========================
+   CODE BLOCK
+=========================== */
 pre {
   margin: 0;
 }
@@ -172,11 +179,12 @@ code {
   white-space: pre-wrap;
 }
 
+/* ===========================
+   DIVIDERS
+=========================== */
 hr {
   border: none;
   border-top: 2px solid var(--accent);
-  /* width: 90%; */
-  /* max-width: 900px; */
   margin: 40px auto;
 }
 
@@ -184,6 +192,9 @@ hr {
   width: 90%;
 }
 
+/* ===========================
+   LISTS
+=========================== */
 ul,
 ol {
   padding-left: 1.5rem;
@@ -204,7 +215,6 @@ li::marker {
 
 .lesson-links {
   list-style-type: square;
-  /* padding-left: 0; */
   line-height: 1.7;
   letter-spacing: 1px;
   font-size: 18px;
@@ -220,23 +230,9 @@ li::marker {
   flex-wrap: wrap;
 }
 
-/* THEME SELECTOR */
-#themeSelector {
-  background: var(--panel-alt);
-  color: var(--text-main);
-  border: 2px solid var(--accent);
-  box-shadow: 0 0 10px var(--shadow-accent);
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 6px;
-  font-family: "Press Start 2P";
-}
-
-#themeSelector:hover {
-  background: var(--hover-bg);
-}
-
-/* BUTTONS */
+/* ===========================
+   BUTTONS
+=========================== */
 button {
   background-color: var(--panel-alt);
   color: var(--text-main);
@@ -258,7 +254,9 @@ button:active {
   transform: scale(0.97);
 }
 
-/* LINKS */
+/* ===========================
+   LINKS & IMAGES
+=========================== */
 a {
   color: var(--accent);
   text-decoration: none;
@@ -276,14 +274,15 @@ a:hover img {
 }
 
 img {
-  display: block;
   width: 100%;
   border: 3px solid var(--panel-alt);
   border-radius: 8px;
   transition: transform 0.2s ease;
 }
 
-/* RESPONSIVE */
+/* ===========================
+   RESPONSIVE
+=========================== */
 @media (max-width: 649px) {
   p,
   li {
