@@ -103,8 +103,7 @@ li {
 /* ===========================
    ACCORDION
 =========================== */
-.accordion,
-.result-img {
+.accordion {
   margin: 20px auto;
 }
 
