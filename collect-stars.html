@@ -24,12 +24,11 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: flex-start;
-        padding: 30px 10px;
+        justify-content: center;
+        padding: 10px;
         min-height: 100dvh;
         color: var(--text-main);
         font-family: Arial, sans-serif;
-        line-height: 1.5;
       }
 
       .instruction {
@@ -41,7 +40,6 @@
       #game-world {
         width: 95%;
         max-width: 800px;
-        aspect-ratio: 4/3;
         background: var(--panel);
         border: 3px solid var(--accent);
         border-radius: 6px;
@@ -49,6 +47,10 @@
         position: relative;
         overflow: hidden;
         margin-bottom: 20px;
+        /* Make the height dynamic for mobile */
+        height: calc(
+          100dvh - 20px - 40px - 150px
+        ); /* 20px top padding + 40px instruction + 150px approx touch buttons */
       }
 
       #player {
@@ -100,8 +102,8 @@
       }
 
       .touch-button {
-        width: 50px;
-        height: 50px;
+        width: 55px;
+        height: 55px;
         background: var(--panel-alt);
         color: var(--text-main);
         border: 2px outset var(--accent);
@@ -121,10 +123,14 @@
       }
 
       @media (max-width: 650px) {
+        
+
         #game-world {
-          aspect-ratio: auto;
-          height: 70vh;
+          height: calc(
+            100dvh - 20px - 40px - 140px - 20px
+          ); /* Adjust depending on instruction + buttons height */
         }
+
         .touch-controls {
           display: flex;
         }
@@ -196,7 +202,9 @@
 
       // --- Масштаб гравця ---
       function updatePlayerScale() {
-        const scale = (gameWorldEl.clientWidth / 800) * 2.5;
+        const scaleW = gameWorldEl.clientWidth / 800;
+        const scaleH = gameWorldEl.clientHeight / 600; // based on your original design
+        const scale = Math.min(scaleW, scaleH) * 2.5; // scale proportionally
         playerEl.style.width = FRAME_WIDTH * scale + "px";
         playerEl.style.height = FRAME_HEIGHT * scale + "px";
         playerEl.style.backgroundSize =
@@ -206,6 +214,7 @@
           "px";
         playerEl.dataset.scale = scale;
       }
+
       window.addEventListener("resize", updatePlayerScale);
 
       // --- Клавіатура ---
