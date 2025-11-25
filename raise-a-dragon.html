@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+    />
+    <title>Вирости Дракона</title>
+
+    <style>
+      /* =========================================
+   GLOBAL VARIABLES
+========================================= */
+      :root {
+        /* Backgrounds */
+        --bg: #0a1030;
+        --panel: #0d1440;
+        --panel-alt: #102159;
+        --hover-bg: #16327b;
+        --code-bg: #0e1a4d;
+
+        /* Text */
+        --text-main: #d6ecff;
+        --text-soft: #a9dcff;
+        --title: #78c7ff;
+
+        /* Borders & accents */
+        --accent: #4fa7ff;
+
+        /* Effects */
+        --shadow-accent: rgba(79, 167, 255, 0.25);
+        --title-glow: rgba(120, 199, 255, 0.6);
+
+        /* Layout sizes */
+        --panel-width: 420px;
+        /* --dragon-size: 100px; */
+      }
+
+      /* =========================================
+   RESET
+========================================= */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      /* =========================================
+   PAGE LAYOUT
+========================================= */
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        color: var(--text-main);
+        font-family: Arial, sans-serif;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100dvh !important;
+        min-width: 100dvw !important;
+      }
+
+      /* =========================================
+   GAME PANEL
+========================================= */
+      .panel {
+        width: var(--panel-width);
+        padding: 25px;
+
+        background: var(--panel);
+        border-radius: 20px;
+        border: 1px solid var(--accent);
+
+        box-shadow: 0 0 20px var(--shadow-accent);
+      }
+
+      /* =========================================
+   TITLE
+========================================= */
+      h1 {
+        margin-top: 0;
+        text-align: center;
+        font-size: 35px;
+        color: var(--title);
+        text-shadow: 0 0 8px var(--title-glow);
+      }
+
+      /* =========================================
+   DRAGON DISPLAY
+========================================= */
+      #dragon {
+        font-size: 100px;
+        text-align: center;
+        margin: 10px 0;
+      }
+
+      /* =========================================
+   STATUS BARS
+========================================= */
+      .stat-label {
+        margin-bottom: 5px;
+        color: var(--text-soft);
+      }
+
+      .stat-bar {
+        background: var(--panel-alt);
+        height: 14px;
+        margin-bottom: 10px;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .stat-fill {
+        height: 100%;
+        background: var(--accent);
+        transition: width 0.3s;
+      }
+
+      /* =========================================
+   BUTTONS
+========================================= */
+      button {
+        cursor: pointer;
+        font: inherit;
+
+        width: 48%;
+        padding: 12px;
+        margin-top: 10px;
+
+        background: var(--panel-alt);
+        border: 2px outset var(--accent);
+        border-radius: 6px;
+
+        color: var(--text-main);
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      button:hover {
+        background: var(--hover-bg);
+        color: var(--text-soft);
+      }
+      button:active {
+        transform: scale(0.97);
+      }
+
+      /* =========================================
+   MESSAGES & INFORMATION
+========================================= */
+      #message {
+        height: 18px;
+        text-align: center;
+        color: var(--title);
+        margin-top: 5px;
+      }
+
+      #age {
+        text-align: center;
+        font-size: 12px;
+        color: var(--text-soft);
+      }
+
+      /* =========================================
+   GAME OVER PANEL
+========================================= */
+      #game-over {
+        display: none;
+        margin-top: 15px;
+        padding: 10px;
+
+        background: var(--hover-bg);
+        border: 1px solid var(--title);
+        border-radius: 10px;
+        text-align: center;
+      }
+
+      @media (max-width: 700px) {
+        .panel {
+          width: 90%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="panel">
+      <h1>Вирости Дракона</h1>
+
+      <p style="text-align: center; font-size: 14px">
+        Стадія: <span id="stage-name">Яйце</span>
+      </p>
+
+      <div id="dragon">🥚</div>
+
+      <div class="stat-label">Ситість</div>
+      <div class="stat-bar">
+        <div id="hunger" class="stat-fill" style="width: 100%"></div>
+      </div>
+
+      <div class="stat-label">Щастя</div>
+      <div class="stat-bar">
+        <div id="happiness" class="stat-fill" style="width: 100%"></div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between">
+        <button id="feed">🍕 Годувати</button>
+        <button id="play">🏀 Гратися</button>
+      </div>
+
+      <p id="message"></p>
+
+      <p id="age">Вік: 0 c</p>
+
+      <div id="game-over"></div>
+    </div>
+
+    <script>
+      // =========================================================
+      //   КЛАС ДРАКОНА (OOP) – містить усі властивості та логіку
+      // =========================================================
+
+      class Dragon {
+        constructor() {
+          // Поточна стадія розвитку (0 = яйце)
+          this.stage = 0;
+
+          // Статуси — 100 це максимум
+          this.hunger = 100; // Ситість
+          this.happiness = 100; // Щастя
+
+          this.age = 0; // Вік (у секундах гри)
+          this.isFinished = false; // Прапорець кінця гри
+
+          // Масив стадій розвитку
+          this.stages = [
+            { name: "Яйце", emoji: "🥚", time: 10 },
+            { name: "Дитинча", emoji: "🦎", time: 30 },
+            { name: "Юний Дракон", emoji: "🐉", time: 60 },
+            { name: "Дорослий", emoji: "🐲", time: 90 }, // після цієї стадії гра завершується
+          ];
+        }
+
+        // ---------------------------
+        //   ДІЇ ГРАВЦЯ
+        // ---------------------------
+
+        // Годувати дракона
+        feed() {
+          if (this.isFinished) return;
+          this.hunger = Math.min(100, this.hunger + 15);
+          showMessage("Дракон ситий!");
+        }
+
+        // Гратися з драконом
+        play() {
+          if (this.isFinished) return;
+          this.happiness = Math.min(100, this.happiness + 15);
+          this.hunger = Math.max(0, this.hunger - 3);
+          showMessage("Дракон щасливий!");
+        }
+
+        // ---------------------------
+        //   ОНОВЛЕННЯ СТАНУ ДРАКОНА
+        //   ВИКЛИКАЄТЬСЯ КОЖНІ X секунд (setInterval)
+        // ---------------------------
+
+        update() {
+          if (this.isFinished) return;
+
+          // Кожне оновлення — це одна "секунда" часу гри
+          this.age++;
+
+          // Поступове зменшення станів (штучна складність)
+          this.hunger -= 3.5;
+          this.happiness -= 3;
+
+          // Перехід на наступну стадію розвитку
+          if (
+            this.age >= this.stages[this.stage].time &&
+            this.stage < this.stages.length - 1
+          ) {
+            this.stage++;
+            showMessage("🎉 Новий етап розвитку!");
+          }
+
+          // Якщо досягнута фінальна стадія — дракон іде у світ
+          if (
+            this.stage === this.stages.length - 1 &&
+            this.age >= this.stages[3].time
+          ) {
+            this.leave();
+          }
+
+          // Смерть (коли ситість або щастя досягають нуля)
+          if (this.hunger <= 0 || this.happiness <= 0) {
+            this.die();
+          }
+        }
+
+        // ---------------------------
+        //   СМЕРТЬ ДРАКОНА
+        // ---------------------------
+        die() {
+          this.isFinished = true;
+          dragonEl.textContent = "💀"; // Змінюємо emoji негайно
+
+          // Трохи чекаємо перед показом "кінець гри",
+          // щоб гравець побачив 💀
+          setTimeout(() => {
+            gameOver("Ваш дракон занадто ослаб... 😢");
+          }, 700);
+        }
+
+        // ---------------------------
+        //   ДРАКОН ВИЛІТАЄ У ВСЕСВІТ
+        // ---------------------------
+        leave() {
+          this.isFinished = true;
+          dragonEl.textContent = "🌌"; // Змінюємо emoji
+
+          setTimeout(() => {
+            gameOver("Ваш дракон виріс і відлетів досліджувати всесвіт! ✨");
+          }, 700);
+        }
+      }
+
+      // =========================================================
+      //   СТВОРЕННЯ ДРАКОНА
+      // =========================================================
+
+      const dragon = new Dragon();
+
+      // =========================================================
+      //   ЕЛЕМЕНТИ ІНТЕРФЕЙСУ
+      // =========================================================
+
+      const dragonEl = document.getElementById("dragon");
+      const stageEl = document.getElementById("stage-name");
+      const hungerEl = document.getElementById("hunger");
+      const happyEl = document.getElementById("happiness");
+      const ageEl = document.getElementById("age");
+      const msgEl = document.getElementById("message");
+      const gameOverEl = document.getElementById("game-over");
+
+      // Обробники кнопок
+      document.getElementById("feed").onclick = () => {
+        dragon.feed();
+        updateUI();
+      };
+
+      document.getElementById("play").onclick = () => {
+        dragon.play();
+        updateUI();
+      };
+
+      // =========================================================
+      //   ВИВЕДЕННЯ КОРОТКИХ ПОВІДОМЛЕНЬ
+      // =========================================================
+
+      function showMessage(text) {
+        msgEl.textContent = text;
+        setTimeout(() => (msgEl.textContent = ""), 2000);
+      }
+
+      // =========================================================
+      //   КІНЕЦЬ ГРИ
+      // =========================================================
+
+      function gameOver(text) {
+        gameOverEl.style.display = "block";
+        gameOverEl.textContent = text;
+      }
+
+      // =========================================================
+      //   ОНОВЛЕННЯ ІНТЕРФЕЙСУ
+      // =========================================================
+
+      function updateUI() {
+        // Якщо гра не закінчена — оновлюємо вигляд дракона
+        if (!dragon.isFinished) {
+          const s = dragon.stages[dragon.stage];
+
+          dragonEl.textContent = s.emoji;
+          stageEl.textContent = s.name;
+        }
+
+        // Оновлення смужок статусів
+        hungerEl.style.width = dragon.hunger + "%";
+        happyEl.style.width = dragon.happiness + "%";
+
+        // Оновлення віку
+        ageEl.textContent = "Вік: " + dragon.age + " c";
+      }
+
+      // =========================================================
+      //   ГОЛОВНИЙ ІГРОВИЙ ЦИКЛ (setInterval)
+      // =========================================================
+      //
+      //  ЧОМУ ВИКОРИСТОВУЄТЬСЯ setInterval?
+      //
+      //  setInterval викликає функцію update() кожні 1200 мс,
+      //  створюючи "пульс гри". Це як тікання годинника.
+      //
+      //  Кожен тік:
+      //    • збільшує вік дракона
+      //    • зменшує ситість та щастя
+      //    • перевіряє, чи настав час еволюції
+      //    • перевіряє, чи не настав час смерті
+      //    • оновлює інтерфейс
+      //
+      //  Без setInterval() гра б не була "живою"
+      //  — нічого б не змінювалося з часом.
+      //
+
+      setInterval(() => {
+        dragon.update();
+        updateUI();
+      }, 1200);
+
+      // Початкове оновлення інтерфейсу
+      updateUI();
+    </script>
+  </body>
+</html>
