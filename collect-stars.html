@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pixel Walk with Stars</title>
+    <title>Ловець Зірок</title>
+    <link rel="icon" type="image/x-icon" href="./images/favicon.ico" />
     <style>
       :root {
         --bg: #0a1030;
@@ -12,6 +13,8 @@
         --accent: #4fa7ff;
         --shadow-accent: rgba(79, 167, 255, 0.25);
         --text-main: #d6ecff;
+        --title: #78c7ff;
+        --title-glow: rgba(120, 199, 255, 0.6);
       }
 
       * {
@@ -24,11 +27,19 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
         padding: 10px;
         min-height: 100dvh;
         color: var(--text-main);
         font-family: Arial, sans-serif;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 35px;
+        color: var(--title);
+        text-shadow: 0 0 8px var(--title-glow);
+        margin-bottom: 10px;
       }
 
       .instruction {
@@ -47,10 +58,6 @@
         position: relative;
         overflow: hidden;
         margin-bottom: 20px;
-        /* Make the height dynamic for mobile */
-        height: calc(
-          100dvh - 20px - 40px - 150px
-        ); /* 20px top padding + 40px instruction + 150px approx touch buttons */
       }
 
       #player {
@@ -68,24 +75,26 @@
         line-height: 32px;
         pointer-events: none;
         user-select: none;
+        z-index: 8;
       }
 
       .game-over {
         position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: var(--panel-alt);
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
         color: goldenrod;
-        font-size: 22px;
+        font-size: 28px;
         font-weight: 500;
-        padding: 20px 40px;
-        border: 3px solid var(--accent);
-        border-radius: 15px;
-        display: none;
         text-align: center;
+        border-radius: 6px;
+        display: none;
         z-index: 20;
-        width: 80%;
       }
 
       .touch-controls {
@@ -124,30 +133,23 @@
       }
 
       @media (max-width: 650px) {
-        #game-world {
-          height: calc(
-            100dvh - 20px - 40px - 140px - 20px
-          ); /* Adjust depending on instruction + buttons height */
-        }
-
         .touch-controls {
           display: flex;
         }
-
         .star {
           width: 20px;
           height: 20px;
           font-size: 20px;
           line-height: 20px;
         }
-
         .game-over {
-          font-size: 18px;
+          font-size: 22px;
         }
       }
     </style>
   </head>
   <body>
+    <h1>Ловець Зірок</h1>
     <div class="instruction">
       Використовуйте клавіші або кнопки для руху. <br />Завдання: зібрати всі
       зірки.
@@ -172,18 +174,16 @@
     </div>
 
     <script>
-      const FRAME_WIDTH = 32;
-      const FRAME_HEIGHT = 48;
-      const FRAME_COUNT = 8;
-      const ANIMATION_FPS = 10;
-      const PLAYER_SPEED = 2;
-      const frameDuration = 1000 / ANIMATION_FPS;
-
+      const FRAME_WIDTH = 32,
+        FRAME_HEIGHT = 48,
+        FRAME_COUNT = 8,
+        ANIMATION_FPS = 10;
+      const PLAYER_SPEED = 2,
+        frameDuration = 1000 / ANIMATION_FPS;
       const SPRITE_SHEETS = {
         EAST: "./images/blue_walk_EAST-Sheet.png",
         WEST: "./images/blue_walk_WEST-Sheet.png",
       };
-
       const playerEl = document.getElementById("player");
       const gameWorldEl = document.getElementById("game-world");
       const gameOverEl = document.getElementById("game-over");
@@ -197,20 +197,15 @@
       };
       const keysPressed = {};
       let lastTimestamp = 0,
-        animationTimer = 0;
-      let gameRunning = true;
+        animationTimer = 0,
+        gameRunning = true;
 
-      // --- Масштаб гравця ---
+      // --- Player scale ---
       function updatePlayerScale() {
         const scaleW = gameWorldEl.clientWidth / 800;
         const scaleH = gameWorldEl.clientHeight / 600;
-        let scale = Math.min(scaleW, scaleH) * 2.5; // default scale
-
-        // Make player slightly bigger on small screens
-        if (window.innerWidth <= 650) {
-          scale *= 1.3; // increase by 30% on mobile
-        }
-
+        let scale = Math.min(scaleW, scaleH) * 2.5;
+        if (window.innerWidth <= 650) scale *= 1.3;
         playerEl.style.width = FRAME_WIDTH * scale + "px";
         playerEl.style.height = FRAME_HEIGHT * scale + "px";
         playerEl.style.backgroundSize =
@@ -220,10 +215,9 @@
           "px";
         playerEl.dataset.scale = scale;
       }
-
       window.addEventListener("resize", updatePlayerScale);
 
-      // --- Клавіатура ---
+      // --- Controls ---
       document.addEventListener("keydown", (e) => {
         const key = e.key.toUpperCase();
         if (["ARROWUP", "ARROWDOWN", "ARROWLEFT", "ARROWRIGHT"].includes(key)) {
@@ -244,17 +238,16 @@
         }
       });
 
-      // --- Touch buttons ---
       document.querySelectorAll(".touch-button").forEach((btn) => {
         btn.addEventListener("touchstart", (e) => {
-          btn.classList.add("pressed"); // add pressed class
+          btn.classList.add("pressed");
           const dir = btn.dataset.dir.toUpperCase();
           keysPressed["ARROW" + dir] = true;
           player.isMoving = true;
           e.preventDefault();
         });
         btn.addEventListener("touchend", (e) => {
-          btn.classList.remove("pressed"); // remove pressed class
+          btn.classList.remove("pressed");
           const dir = btn.dataset.dir.toUpperCase();
           keysPressed["ARROW" + dir] = false;
           player.isMoving =
@@ -265,7 +258,7 @@
         });
       });
 
-      // --- Позиція ---
+      // --- Movement ---
       function updatePosition() {
         if (!gameRunning) return;
         let dx = 0,
@@ -296,12 +289,11 @@
         );
       }
 
-      // --- Анімація ---
+      // --- Animation ---
       function updateAnimation(timestamp) {
         if (!gameRunning) return;
         const deltaTime = timestamp - lastTimestamp;
         lastTimestamp = timestamp;
-
         if (player.isMoving) {
           animationTimer += deltaTime;
           if (animationTimer >= frameDuration) {
@@ -309,7 +301,6 @@
             animationTimer %= frameDuration;
           }
         } else player.currentFrame = 0;
-
         playerEl.style.backgroundImage = `url(${
           player.direction === "WEST" ? SPRITE_SHEETS.WEST : SPRITE_SHEETS.EAST
         })`;
@@ -321,21 +312,51 @@
         }px, ${player.y - (FRAME_HEIGHT * scale) / 2}px)`;
       }
 
+      // --- Night sky background ---
+      const STAR_BG_COUNT = 100;
+      function generateBackgroundDots() {
+        for (let i = 0; i < STAR_BG_COUNT; i++) {
+          const dot = document.createElement("div");
+          dot.style.position = "absolute";
+          dot.style.width = dot.style.height = "2px";
+          dot.style.borderRadius = "50%";
+          dot.style.background = Math.random() < 0.5 ? "#fff" : "#ffec99";
+          dot.style.left = Math.random() * 100 + "%";
+          dot.style.top = Math.random() * 100 + "%";
+          dot.style.pointerEvents = "none";
+          dot.style.zIndex = "1";
+          gameWorldEl.appendChild(dot);
+        }
+      }
+
       // --- Stars ---
       const stars = [];
       const STAR_COUNT = 5;
-
       function spawnStars() {
+        // Remove old stars
+        stars.forEach((s) => s.remove());
+        stars.length = 0;
+
+        const scale = parseFloat(playerEl.dataset.scale || 2.5);
+        const displayW = FRAME_WIDTH * scale;
+        const displayH = FRAME_HEIGHT * scale;
+
         for (let i = 0; i < STAR_COUNT; i++) {
           const star = document.createElement("div");
           star.classList.add("star");
           star.textContent = "⭐";
 
-          const x = Math.random() * (gameWorldEl.clientWidth - 32);
-          const y = Math.random() * (gameWorldEl.clientHeight - 32);
+          let x, y;
+          do {
+            x = Math.random() * (gameWorldEl.clientWidth - 32);
+            y = Math.random() * (gameWorldEl.clientHeight - 32);
+          } while (
+            Math.abs(x + 16 - player.x) < 100 &&
+            Math.abs(y + 16 - player.y) < 100
+          ); // keep stars away from player
+
           star.style.left = x + "px";
           star.style.top = y + "px";
-
           gameWorldEl.appendChild(star);
           stars.push(star);
         }
@@ -351,19 +372,14 @@
           w: FRAME_WIDTH * scale,
           h: FRAME_HEIGHT * scale,
         };
-
         for (let i = stars.length - 1; i >= 0; i--) {
           const s = stars[i];
           const starRect = s.getBoundingClientRect();
           const worldRect = gameWorldEl.getBoundingClientRect();
-
-          // Calculate star position relative to game world
           const sx = starRect.left - worldRect.left;
           const sy = starRect.top - worldRect.top;
-          const sw = starRect.width;
-          const sh = starRect.height;
-
-          // AABB collision check
+          const sw = starRect.width,
+            sh = starRect.height;
           if (
             playerRect.x < sx + sw &&
             playerRect.x + playerRect.w > sx &&
@@ -373,14 +389,13 @@
             s.remove();
             stars.splice(i, 1);
             if (stars.length === 0) {
-              gameOverEl.style.display = "block";
+              gameOverEl.style.display = "flex";
               gameRunning = false;
             }
           }
         }
       }
 
-      // --- Головний цикл ---
       function gameLoop(timestamp) {
         if (gameRunning) {
           updatePosition();
@@ -394,9 +409,56 @@
         updatePlayerScale();
         player.x = gameWorldEl.clientWidth / 2;
         player.y = gameWorldEl.clientHeight / 2;
+        generateBackgroundDots();
         spawnStars();
         gameLoop(0);
       };
+
+      function resizeGameWorld() {
+        const h1 = document.querySelector("h1");
+        const instruction = document.querySelector(".instruction");
+        const buttonsHeight =
+          document.querySelector(".touch-controls")?.offsetHeight || 0;
+        const padding = 20; // body padding
+
+        // Compute available height for game-world
+        const availableHeight =
+          window.innerHeight -
+          h1.offsetHeight -
+          instruction.offsetHeight -
+          buttonsHeight -
+          padding -
+          100;
+
+        gameWorldEl.style.height = availableHeight + "px";
+
+        updatePlayerScale(); // scale player after setting height
+
+        // Optional: Reposition player inside the visible game-world
+        player.x = Math.min(
+          Math.max(player.x, FRAME_WIDTH / 2),
+          gameWorldEl.clientWidth - FRAME_WIDTH / 2
+        );
+        player.y = Math.min(
+          Math.max(player.y, FRAME_HEIGHT / 2),
+          gameWorldEl.clientHeight - FRAME_HEIGHT / 2
+        );
+      }
+
+      // Call on load and resize
+      window.addEventListener("load", () => {
+        resizeGameWorld();
+        player.x = gameWorldEl.clientWidth / 2;
+        player.y = gameWorldEl.clientHeight / 2;
+        generateBackgroundDots();
+        spawnStars(); // stars now spawn in correct visible area
+        gameLoop(0);
+      });
+
+      window.addEventListener("resize", () => {
+        resizeGameWorld();
+        spawnStars(); // optional: respawn stars on resize to fit screen
+      });
     </script>
   </body>
 </html>
