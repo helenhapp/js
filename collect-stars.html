@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pixel Walk with Stars</title>
+    <style>
+      :root {
+        --bg: #0a1030;
+        --panel: #0d1440;
+        --panel-alt: #102159;
+        --accent: #4fa7ff;
+        --shadow-accent: rgba(79, 167, 255, 0.25);
+        --text-main: #d6ecff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 30px 10px;
+        min-height: 100dvh;
+        color: var(--text-main);
+        font-family: Arial, sans-serif;
+        line-height: 1.5;
+      }
+
+      .instruction {
+        font-size: 16px;
+        margin-bottom: 10px;
+        text-align: center;
+      }
+
+      #game-world {
+        width: 95%;
+        max-width: 800px;
+        aspect-ratio: 4/3;
+        background: var(--panel);
+        border: 3px solid var(--accent);
+        border-radius: 6px;
+        box-shadow: 0 0 20px var(--shadow-accent);
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 20px;
+      }
+
+      #player {
+        position: absolute;
+        image-rendering: pixelated;
+        z-index: 10;
+      }
+
+      .star {
+        position: absolute;
+        width: 32px;
+        height: 32px;
+        font-size: 32px;
+        text-align: center;
+        line-height: 32px;
+        pointer-events: none;
+        user-select: none;
+      }
+
+      .game-over {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: var(--panel-alt);
+        color: var(--accent);
+        font-size: 32px;
+        font-weight: bold;
+        padding: 20px 40px;
+        border: 3px solid var(--accent);
+        border-radius: 15px;
+        display: none;
+        text-align: center;
+        z-index: 20;
+      }
+
+      .touch-controls {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .touch-row {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .touch-button {
+        width: 50px;
+        height: 50px;
+        background: var(--panel-alt);
+        color: var(--text-main);
+        border: 2px outset var(--accent);
+        border-radius: 6px;
+        font-size: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /*user-select: none;*/
+        box-shadow: 0 0 10px var(--shadow-accent);
+        /*touch-action: none;*/
+        transition: 0.2s ease;
+      }
+
+      .touch-button:active {
+        transform: scale(0.95);
+      }
+
+      @media (max-width: 650px) {
+        #game-world {
+          aspect-ratio: auto;
+          height: 70vh;
+        }
+        .touch-controls {
+          display: flex;
+        }
+
+        .star {
+          width: 20px;
+          height: 20px;
+          font-size: 20px;
+          line-height: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="instruction">
+      Використовуйте клавіші або кнопки для руху. Завдання: зібрати всі зірки.
+    </div>
+
+    <div id="game-world">
+      <div id="player"></div>
+      <div id="game-over" class="game-over">
+        Ви зібрали всі зірки! Гру завершено.
+      </div>
+    </div>
+
+    <div class="touch-controls">
+      <div class="touch-row">
+        <div class="touch-button" data-dir="UP">↑</div>
+      </div>
+      <div class="touch-row">
+        <div class="touch-button" data-dir="LEFT">←</div>
+        <div class="touch-button" data-dir="DOWN">↓</div>
+        <div class="touch-button" data-dir="RIGHT">→</div>
+      </div>
+    </div>
+
+    <script>
+      const FRAME_WIDTH = 32;
+      const FRAME_HEIGHT = 48;
+      const FRAME_COUNT = 8;
+      const ANIMATION_FPS = 10;
+      const PLAYER_SPEED = 2;
+      const frameDuration = 1000 / ANIMATION_FPS;
+
+      const SPRITE_SHEETS = {
+        EAST: "./images/blue_walk_EAST-Sheet.png",
+        WEST: "./images/blue_walk_WEST-Sheet.png",
+      };
+
+      const playerEl = document.getElementById("player");
+      const gameWorldEl = document.getElementById("game-world");
+      const gameOverEl = document.getElementById("game-over");
+
+      const player = {
+        x: 0,
+        y: 0,
+        direction: "EAST",
+        isMoving: false,
+        currentFrame: 0,
+      };
+      const keysPressed = {};
+      let lastTimestamp = 0,
+        animationTimer = 0;
+      let gameRunning = true;
+
+      // --- Масштаб гравця ---
+      function updatePlayerScale() {
+        const scale = (gameWorldEl.clientWidth / 800) * 2.5;
+        playerEl.style.width = FRAME_WIDTH * scale + "px";
+        playerEl.style.height = FRAME_HEIGHT * scale + "px";
+        playerEl.style.backgroundSize =
+          FRAME_WIDTH * FRAME_COUNT * scale +
+          "px " +
+          FRAME_HEIGHT * scale +
+          "px";
+        playerEl.dataset.scale = scale;
+      }
+      window.addEventListener("resize", updatePlayerScale);
+
+      // --- Клавіатура ---
+      document.addEventListener("keydown", (e) => {
+        const key = e.key.toUpperCase();
+        if (["ARROWUP", "ARROWDOWN", "ARROWLEFT", "ARROWRIGHT"].includes(key)) {
+          keysPressed[key] = true;
+          player.isMoving = true;
+          e.preventDefault();
+        }
+      });
+      document.addEventListener("keyup", (e) => {
+        const key = e.key.toUpperCase();
+        if (["ARROWUP", "ARROWDOWN", "ARROWLEFT", "ARROWRIGHT"].includes(key)) {
+          keysPressed[key] = false;
+          player.isMoving =
+            keysPressed["ARROWUP"] ||
+            keysPressed["ARROWDOWN"] ||
+            keysPressed["ARROWLEFT"] ||
+            keysPressed["ARROWRIGHT"];
+        }
+      });
+
+      // --- Touch buttons ---
+      document.querySelectorAll(".touch-button").forEach((btn) => {
+        btn.addEventListener("touchstart", (e) => {
+          const dir = btn.dataset.dir.toUpperCase();
+          keysPressed["ARROW" + dir] = true;
+          player.isMoving = true;
+          e.preventDefault();
+        });
+        btn.addEventListener("touchend", (e) => {
+          const dir = btn.dataset.dir.toUpperCase();
+          keysPressed["ARROW" + dir] = false;
+          player.isMoving =
+            keysPressed["ARROWUP"] ||
+            keysPressed["ARROWDOWN"] ||
+            keysPressed["ARROWLEFT"] ||
+            keysPressed["ARROWRIGHT"];
+        });
+      });
+
+      // --- Позиція ---
+      function updatePosition() {
+        if (!gameRunning) return;
+        let dx = 0,
+          dy = 0;
+        const scale = parseFloat(playerEl.dataset.scale || 2.5);
+        const displayW = FRAME_WIDTH * scale,
+          displayH = FRAME_HEIGHT * scale;
+        if (keysPressed["ARROWLEFT"]) {
+          dx -= PLAYER_SPEED;
+          player.direction = "WEST";
+        }
+        if (keysPressed["ARROWRIGHT"]) {
+          dx += PLAYER_SPEED;
+          player.direction = "EAST";
+        }
+        if (keysPressed["ARROWUP"]) dy -= PLAYER_SPEED;
+        if (keysPressed["ARROWDOWN"]) dy += PLAYER_SPEED;
+
+        const halfW = displayW / 2,
+          halfH = displayH / 2;
+        player.x = Math.min(
+          Math.max(player.x + dx, halfW),
+          gameWorldEl.clientWidth - halfW
+        );
+        player.y = Math.min(
+          Math.max(player.y + dy, halfH),
+          gameWorldEl.clientHeight - halfH
+        );
+      }
+
+      // --- Анімація ---
+      function updateAnimation(timestamp) {
+        if (!gameRunning) return;
+        const deltaTime = timestamp - lastTimestamp;
+        lastTimestamp = timestamp;
+
+        if (player.isMoving) {
+          animationTimer += deltaTime;
+          if (animationTimer >= frameDuration) {
+            player.currentFrame = (player.currentFrame + 1) % FRAME_COUNT;
+            animationTimer %= frameDuration;
+          }
+        } else player.currentFrame = 0;
+
+        playerEl.style.backgroundImage = `url(${
+          player.direction === "WEST" ? SPRITE_SHEETS.WEST : SPRITE_SHEETS.EAST
+        })`;
+        const scale = parseFloat(playerEl.dataset.scale || 2.5);
+        const bgX = player.currentFrame * FRAME_WIDTH;
+        playerEl.style.backgroundPosition = `-${bgX * scale}px 0`;
+        playerEl.style.transform = `translate(${
+          player.x - (FRAME_WIDTH * scale) / 2
+        }px, ${player.y - (FRAME_HEIGHT * scale) / 2}px)`;
+      }
+
+      // --- Stars ---
+      const stars = [];
+      const STAR_COUNT = 5;
+
+      function spawnStars() {
+        for (let i = 0; i < STAR_COUNT; i++) {
+          const star = document.createElement("div");
+          star.classList.add("star");
+          star.textContent = "⭐";
+
+          const x = Math.random() * (gameWorldEl.clientWidth - 32);
+          const y = Math.random() * (gameWorldEl.clientHeight - 32);
+          star.style.left = x + "px";
+          star.style.top = y + "px";
+
+          gameWorldEl.appendChild(star);
+          stars.push(star);
+        }
+      }
+
+      // --- Collect stars ---
+      function checkStars() {
+        if (!gameRunning) return;
+        const scale = parseFloat(playerEl.dataset.scale || 2.5);
+        const playerRect = {
+          x: player.x - (FRAME_WIDTH * scale) / 2,
+          y: player.y - (FRAME_HEIGHT * scale) / 2,
+          w: FRAME_WIDTH * scale,
+          h: FRAME_HEIGHT * scale,
+        };
+
+        for (let i = stars.length - 1; i >= 0; i--) {
+          const s = stars[i];
+          const starRect = s.getBoundingClientRect();
+          const worldRect = gameWorldEl.getBoundingClientRect();
+
+          // Calculate star position relative to game world
+          const sx = starRect.left - worldRect.left;
+          const sy = starRect.top - worldRect.top;
+          const sw = starRect.width;
+          const sh = starRect.height;
+
+          // AABB collision check
+          if (
+            playerRect.x < sx + sw &&
+            playerRect.x + playerRect.w > sx &&
+            playerRect.y < sy + sh &&
+            playerRect.y + playerRect.h > sy
+          ) {
+            s.remove();
+            stars.splice(i, 1);
+            if (stars.length === 0) {
+              gameOverEl.style.display = "block";
+              gameRunning = false;
+            }
+          }
+        }
+      }
+
+      // --- Головний цикл ---
+      function gameLoop(timestamp) {
+        if (gameRunning) {
+          updatePosition();
+          updateAnimation(timestamp);
+          checkStars();
+          requestAnimationFrame(gameLoop);
+        }
+      }
+
+      window.onload = () => {
+        updatePlayerScale();
+        player.x = gameWorldEl.clientWidth / 2;
+        player.y = gameWorldEl.clientHeight / 2;
+        spawnStars();
+        gameLoop(0);
+      };
+    </script>
+  </body>
+</html>
