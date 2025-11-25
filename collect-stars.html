@@ -78,7 +78,7 @@
         background: var(--panel-alt);
         color: goldenrod;
         font-size: 22px;
-        font-weight: 400;
+        font-weight: 500;
         padding: 20px 40px;
         border: 3px solid var(--accent);
         border-radius: 15px;
@@ -201,8 +201,14 @@
       // --- Масштаб гравця ---
       function updatePlayerScale() {
         const scaleW = gameWorldEl.clientWidth / 800;
-        const scaleH = gameWorldEl.clientHeight / 600; // based on your original design
-        const scale = Math.min(scaleW, scaleH) * 2.5; // scale proportionally
+        const scaleH = gameWorldEl.clientHeight / 600;
+        let scale = Math.min(scaleW, scaleH) * 2.5; // default scale
+
+        // Make player slightly bigger on small screens
+        if (window.innerWidth <= 650) {
+          scale *= 1.3; // increase by 30% on mobile
+        }
+
         playerEl.style.width = FRAME_WIDTH * scale + "px";
         playerEl.style.height = FRAME_HEIGHT * scale + "px";
         playerEl.style.backgroundSize =
