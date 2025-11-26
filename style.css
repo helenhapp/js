@@ -46,9 +46,11 @@ header h2 {
 }
 
 header .links {
+  width: 90%;
+  max-width: 850px;
   display: flex;
-  justify-content: space-evenly;
-  margin-top: 20px;
+  justify-content: space-between;
+  margin: 20px auto 0;
 }
 
 header .links a {
@@ -59,6 +61,13 @@ header .links a {
   opacity: 0.75;
 }
 
+p.topic {
+  text-align: center;
+  font-size: 12px;
+  /* margin-top: 10px; */
+  margin: 0;
+}
+
 main {
   width: 90%;
   max-width: 850px;
@@ -66,7 +75,7 @@ main {
 }
 
 h1 {
-  margin: 25px 0;
+  margin: 20px 0;
   color: var(--title);
   text-shadow: 0 0 8px var(--title-glow);
   line-height: 1.5;
@@ -130,6 +139,17 @@ li {
   transition: background 0.2s ease;
 }
 
+/* .task { */
+/* border-color: goldenrod; */
+/* box-shadow: 0 0 12px rgba(225, 212, 137, 0.3); */
+/* } */
+
+/* .task .accordion__header { */
+/* background: #164c85; */
+/* background: #18368e; */
+/* color: #d9f8ff; */
+/* } */
+
 .accordion__header:hover {
   background: var(--hover-bg);
 }
@@ -184,8 +204,15 @@ code {
 hr {
   border: none;
   border-top: 2px solid var(--accent);
-  margin: 38px auto;
+  margin: 30px auto;
 }
+
+/* hr:first-of-type {
+  margin-top: 0;
+}
+hr:last-of-type {
+  margin-bottom: 0;
+} */
 
 .accordion__content hr {
   width: 90%;
