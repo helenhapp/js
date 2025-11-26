@@ -15,6 +15,12 @@
         --text-main: #d6ecff;
         --title: #78c7ff;
         --title-glow: rgba(120, 199, 255, 0.6);
+
+        /* Сині/сірі відтінки для стану гри */
+        --win-color: #00e676; /* Залишаємо зелений для перемоги */
+        --win-glow: rgba(0, 230, 118, 0.5);
+        --lose-color: #e0002b; /* Залишаємо червоний для програшу */
+        --lose-glow: rgba(224, 0, 43, 0.5);
       }
 
       * {
@@ -48,6 +54,18 @@
         text-align: center;
       }
 
+      #star-counter {
+        font-size: 20px;
+        color: var(--title);
+        background: var(--panel-alt);
+        padding: 8px 15px;
+        border-radius: 4px;
+        border: 1px solid var(--accent);
+        margin-bottom: 10px;
+        box-shadow: 0 0 5px var(--shadow-accent);
+        text-align: center;
+      }
+
       #game-world {
         width: 95%;
         max-width: 800px;
@@ -77,6 +95,11 @@
         user-select: none;
         z-index: 8;
       }
+      /* ✅ ВИДАЛЕНО: Фільтр, щоб зірки були жовтими за замовчуванням */
+      /* .star:not(.enemy) {
+        filter: grayscale(100%) brightness(150%) sepia(50%) hue-rotate(180deg)
+          saturate(300%);
+      } */
 
       .game-over {
         position: absolute;
@@ -88,7 +111,6 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        /* 👇 Змінено: Основний колір, який буде змінений на gold/red JS-ом */
         color: var(--text-main);
         font-size: 28px;
         font-weight: 500;
@@ -98,21 +120,19 @@
         z-index: 20;
       }
 
-      /* 🏆 НОВИЙ СТИЛЬ ДЛЯ ПЕРЕМОГИ */
       .game-over.win-state {
-        color: gold;
-        border: 4px solid gold;
-        box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
-        text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        color: var(--win-color);
+        border: 4px solid var(--accent);
+        box-shadow: 0 0 30px var(--win-glow);
+        text-shadow: 0 0 10px var(--win-glow);
         font-size: 36px;
         font-weight: bold;
       }
 
-      /* 💥 НОВИЙ СТИЛЬ ДЛЯ ПРОГРАШУ */
       .game-over.lose-state {
-        color: red;
-        border: 4px solid red;
-        box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
+        color: var(--lose-color);
+        border: 4px solid var(--accent);
+        box-shadow: 0 0 30px var(--lose-glow);
       }
 
       .touch-controls {
@@ -148,18 +168,6 @@
       .touch-button.pressed {
         transform: scale(0.9);
         background: var(--panel);
-      }
-
-      #star-counter {
-        font-size: 20px;
-        color: var(--title);
-        background: var(--panel-alt);
-        padding: 8px 15px;
-        border-radius: 4px;
-        border: 1px solid var(--accent);
-        margin-bottom: 10px;
-        box-shadow: 0 0 5px var(--shadow-accent);
-        text-align: center;
       }
 
       @media (max-width: 650px) {
@@ -217,17 +225,15 @@
         WEST: "./images/blue_walk_WEST-Sheet.png",
       };
 
-      // 🔄 ОНОВЛЕННЯ КОНСТАНТ 🌟👾
       const WORLD_WIDTH = 2500;
       const WORLD_HEIGHT = 1800;
-      const STAR_COUNT = 10; // Змінено на 10
+      const STAR_COUNT = 10;
       const ENEMY_COUNT = 5;
       const ENEMY_SPEED = 0.8;
 
       const playerEl = document.getElementById("player");
       const gameWorldEl = document.getElementById("game-world");
       const gameOverEl = document.getElementById("game-over");
-      // 🌟 НОВИЙ ЕЛЕМЕНТ: Лічильник
       const starCounterEl = document.getElementById("star-counter");
 
       const player = {
@@ -247,16 +253,13 @@
       let stars = [];
       let enemies = [];
 
-      // 🌟 НОВІ ЗМІННІ: Рахунок зірок
       let starsCollected = 0;
       let totalStars = STAR_COUNT;
 
-      // 🌟 НОВА ФУНКЦІЯ: Оновлення тексту лічильника
       function updateStarCounter() {
         starCounterEl.textContent = `Зібрано: ${starsCollected} / ${totalStars}`;
       }
 
-      // --- Player scale (без змін) ---
       function updatePlayerScale() {
         const scaleW = gameWorldEl.clientWidth / 800;
         const scaleH = gameWorldEl.clientHeight / 600;
@@ -273,7 +276,6 @@
       }
       window.addEventListener("resize", updatePlayerScale);
 
-      // --- Controls (без змін) ---
       document.addEventListener("keydown", (e) => {
         const key = e.key.toUpperCase();
         if (["ARROWUP", "ARROWDOWN", "ARROWLEFT", "ARROWRIGHT"].includes(key)) {
@@ -314,7 +316,6 @@
         });
       });
 
-      // --- Movement (без змін) ---
       function updatePosition() {
         if (!gameRunning) return;
         let dx = 0,
@@ -346,7 +347,6 @@
         );
       }
 
-      // --- Camera, Animation, BackgroundDots, WorldElementsPosition (без змін) ---
       function updateCamera() {
         const viewW = gameWorldEl.clientWidth;
         const viewH = gameWorldEl.clientHeight;
@@ -396,6 +396,7 @@
           dot.style.position = "absolute";
           dot.style.width = dot.style.height = "2px";
           dot.style.borderRadius = "50%";
+          // ✅ Фонові крапки знову жовті/білі
           dot.style.background = Math.random() < 0.5 ? "#fff" : "#ffec99";
           dot.style.pointerEvents = "none";
           dot.style.zIndex = "1";
@@ -434,19 +435,17 @@
         });
       }
 
-      // --- Stars (змінена для ініціалізації totalStars) ---
       function spawnStars() {
         stars.forEach((s) => s.remove());
         stars.length = 0;
 
-        // Оновлення лічильників при новому спавні
         starsCollected = 0;
         totalStars = STAR_COUNT;
 
         for (let i = 0; i < STAR_COUNT; i++) {
           const star = document.createElement("div");
           star.classList.add("star");
-          star.textContent = "⭐";
+          star.textContent = "⭐"; // Тепер відображатиметься жовтим за замовчуванням
 
           let x, y;
           do {
@@ -465,19 +464,18 @@
           gameWorldEl.appendChild(star);
           stars.push(star);
         }
-        updateStarCounter(); // Оновити лічильник одразу після спавну
+        updateStarCounter();
       }
 
-      // --- Enemies (без змін) ---
       function spawnEnemies() {
         enemies.forEach((e) => e.el.remove());
         enemies.length = 0;
 
         for (let i = 0; i < ENEMY_COUNT; i++) {
           const enemyEl = document.createElement("div");
-          enemyEl.classList.add("star");
-          enemyEl.textContent = "👾";
-          enemyEl.style.color = "red";
+          enemyEl.classList.add("star", "enemy");
+          enemyEl.textContent = "🛸";
+          enemyEl.style.color = "lightskyblue"; // Прибульці залишаються синіми
 
           let x, y;
           do {
@@ -533,8 +531,6 @@
         });
       }
 
-      // --- Collect stars (ОНОВЛЕНО: додано інкремент лічильника) ---
-      // --- Collect stars (ОНОВЛЕНО: додано класи для перемоги/програшу) ---
       function checkStars() {
         if (!gameRunning) return;
         const scale = parseFloat(playerEl.dataset.scale || 2.5);
@@ -545,10 +541,8 @@
           h: FRAME_HEIGHT * scale,
         };
 
-        // Скидаємо класи стану перед кожною перевіркою
         gameOverEl.classList.remove("win-state", "lose-state");
 
-        // 1. Перевірка зірок
         for (let i = stars.length - 1; i >= 0; i--) {
           const s = stars[i];
 
@@ -571,9 +565,8 @@
             updateStarCounter();
 
             if (stars.length === 0) {
-              // 🏆 ПЕРЕМОГА: Додаємо клас win-state та урочисте повідомлення
               gameOverEl.textContent =
-                "МІСІЯ ВИКОНАНА! Всі зірки зібрано! 🌟🎉";
+                "МІСІЯ ВИКОНАНА! Всі космічні кристали зібрано! 🌌✨";
               gameOverEl.classList.add("win-state");
               gameOverEl.style.display = "flex";
               gameRunning = false;
@@ -581,7 +574,6 @@
           }
         }
 
-        // 2. Перевірка зіткнень з ворогами
         const ENEMY_SIZE = 32;
         for (const e of enemies) {
           const ex = e.x;
@@ -593,9 +585,8 @@
             playerRect.y < ey + ENEMY_SIZE &&
             playerRect.y + playerRect.h > ey
           ) {
-            // 💥 ПРОГРАШ: Додаємо клас lose-state
-            gameOverEl.textContent =
-              "ЗАХОПЛЕНО! Ворог вас спіймав. 👾 Спробуйте ще раз.";
+            // ✅ Змінений текст повідомлення про програш
+            gameOverEl.textContent = "Вас ЗАСІКЛИ! Спробуйте ще раз. 🛸";
             gameOverEl.classList.add("lose-state");
             gameOverEl.style.display = "flex";
             gameRunning = false;
@@ -603,6 +594,7 @@
           }
         }
       }
+
       function gameLoop(timestamp) {
         if (gameRunning) {
           updatePosition();
@@ -615,7 +607,6 @@
         }
       }
 
-      // --- Ініціалізація (без змін) ---
       function initializeGame() {
         resizeGameWorld();
         generateBackgroundDots();
@@ -634,13 +625,13 @@
         const buttonsHeight =
           document.querySelector(".touch-controls")?.offsetHeight || 0;
         const padding = 20;
-        const starCounterHeight = starCounterEl.offsetHeight + 10; // 🌟 Враховуємо висоту лічильника
+        const starCounterHeight = starCounterEl.offsetHeight + 10;
 
         const availableHeight =
           window.innerHeight -
           h1.offsetHeight -
           instruction.offsetHeight -
-          starCounterHeight - // 🌟 Враховуємо
+          starCounterHeight -
           buttonsHeight -
           padding -
           100;
