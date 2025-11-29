@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Тема 10</title>
+
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="icon" type="image/x-icon" href="./images/favicon.ico" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
+    />
+  </head>
+
+  <body>
+    <header>
+      <!-- <div class="links">
+        <a href="#">← Тема 9</a>
+        <a href="#">Всі теми</a>
+        <a href="#">Повторення →</a>
+      </div> -->
+      <h1>Тема 10</h1>
+      <h2>Об'єкти</h2>
+    </header>
+
+    <main>
+      <hr />
+
+      <section class="accordion">
+        <!-- Теорія -->
+        <div class="accordion__item">
+          <div class="accordion__header">
+            <div><span class="star">✧</span> Теорія</div>
+            <span class="acc-arrow">▶</span>
+          </div>
+
+          <div class="accordion__content">
+            <h3>Створення об'єкта</h3>
+
+            <pre><code class="language-javascript">const назва_об'єкта = {
+  властивість: значення,
+  
+  назва_методу () {
+    // якісь дії
+  },
+};</code></pre>
+
+            <pre><code class="language-javascript">const person = {
+  // властивості
+  name: "John",
+  age: 30,
+  isStundent: false,
+  
+  // методи
+  sayHello () {
+    console.log("Привіт, я " + this.name);
+  },
+};</code></pre>
+
+            <hr />
+
+            <h3>Доступ до властивостей та методів об'єкта</h3>
+
+            <pre><code class="language-javascript">console.log(person.name);
+console.log(person.age);
+console.log(person.isStundent);
+
+person.sayHello();</code></pre>
+
+            <h3>Зміна властивостей об'єкта та додавання нових</h3>
+
+            <pre><code class="language-javascript">person.age = 12; // змінюємо age
+person.isStudent = true; // змінюємо isStudent
+
+person.hobbies = ["reading", "video games"]; // додаємо hobbies</code></pre>
+
+            <h3>Об'єкти та document.getElementById</h3>
+
+            <pre><code class="language-javascript">const buttons = {
+  playButton: document.getElementById("play"),
+  restartButton: document.getElementById("reset"),
+
+  editPlayBtn () {
+    this.playButton.innerText = "Play";
+  },
+
+  editResetBtn () {
+    this.restartButton.innerText = "Restart";
+    this.restartButton.style.color = "red";
+  },
+}
+
+buttons.editPlayBtn();
+buttons.editResetBtn();</code></pre>
+          </div>
+        </div>
+
+        <!-- Завдання -->
+        <div class="accordion__item">
+          <div class="accordion__header">
+            <div><span class="star">✦</span> Завдання</div>
+            <span class="acc-arrow">▶</span>
+          </div>
+
+          <div class="accordion__content">
+            <ol>
+              <li>В своїй папці створіть нову папку "Тема10".</li>
+              <li>
+                Завантажте в неї файли до завдання:
+                <ul>
+                  <li>
+                    <a href="./treasure_hunt/index.html" download>index.html</a>
+                  </li>
+                  <li>
+                    <a href="./treasure_hunt/style.css" download>style.css</a>
+                  </li>
+                  <li>
+                    <a href="./treasure_hunt/script.js" download>script.js</a>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                Відкрийте <span>index.html</span> в браузері через Live Server.
+              </li>
+              <li>
+                Виконайте завдання, описані в коментарях у файлі
+                <span>script.js</span>.
+              </li>
+            </ol>
+          </div>
+        </div>
+
+        <img src="./images/lesson10_result.jpg" alt="" />
+      </section>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="./script.js"></script>
+  </body>
+</html>
