@@ -16,6 +16,9 @@
 
   /* Borders & accents */
   --accent: #4fa7ff;
+  /* --accent-pop: #ff6ec7; */
+  --accent-pop: #ffcc00;
+  /* --accent-pop: #00f0b5; */
 
   /* Effects */
   --shadow-accent: rgba(79, 167, 255, 0.25);
@@ -34,6 +37,7 @@ body {
   background-color: var(--bg);
   color: var(--text-main);
   font-family: Arial, sans-serif;
+  padding-bottom: 10px;
 }
 
 header {
@@ -107,6 +111,13 @@ h4 {
 p,
 li {
   text-align: justify;
+}
+
+/* ===========================
+   UTILS
+=========================== */
+.accent {
+  color: var(--accent-pop);
 }
 
 /* ===========================
