@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Dynamic Cute Xmas Scene with Snow</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column; /* Changed to column to stack scene and ground */
+        align-items: center;
+        justify-content: flex-end; /* Push content to the bottom */
+        background: #0d1b2a;
+        font-family: sans-serif;
+        position: relative; /* For positioning the ground and snow */
+        overflow: hidden; /* Hide snowflakes when they fall off screen */
+      }
+
+      /* Container for tree, gifts, snowman */
+      .scene-elements {
+        display: flex;
+        justify-content: space-around;
+        align-items: flex-end;
+        width: 100%;
+        padding-bottom: 50px; /* Space above the ground */
+        position: relative;
+        z-index: 10;
+      }
+
+      /* --- Tree Styles (Retained) --- */
+
+      .tree {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        position: relative;
+      }
+
+      .star {
+        font-size: 48px;
+        margin-bottom: 10px;
+        color: gold;
+        text-shadow: 0 0 10px gold;
+      }
+
+      .row {
+        height: 24px;
+        background: #0f5132;
+        border-radius: 6px;
+      }
+
+      .trunk {
+        width: 40px;
+        height: 40px;
+        background: #7b4b26;
+        border-radius: 4px;
+        margin-top: 6px;
+      }
+
+      /* --- Snowman Styles --- */
+
+      .snowman {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        position: relative;
+      }
+
+      /* Emoji Hat Styling */
+      .snowman-hat-emoji {
+        position: absolute;
+        font-size: 60px;
+        top: -35px;
+        z-index: 11;
+      }
+
+      .snow-ball {
+        background: #e0f2f1;
+        border-radius: 50%;
+        border: 1px solid #c2c2c2;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      }
+
+      /* Eyes for the top ball */
+      .snow-ball:first-child::before,
+      .snow-ball:first-child::after {
+        content: "";
+        position: absolute;
+        top: 15px;
+        width: 5px;
+        height: 5px;
+        background: #0d1b2a;
+        border-radius: 50%;
+      }
+      .snow-ball:first-child::before {
+        left: 10px;
+      }
+      .snow-ball:first-child::after {
+        right: 10px;
+      }
+
+      /* --- Gifts Styles --- */
+
+      .gifts-container {
+        display: flex;
+        gap: 10px;
+        align-items: flex-end;
+      }
+
+      .gift {
+        border-radius: 4px;
+        position: relative;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Emoji Bow Styling - positioned on top of each gift */
+      .gift-bow-emoji {
+        position: absolute;
+        font-size: 30px;
+        top: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 12;
+      }
+
+      /* The ribbon */
+      .gift::before,
+      .gift::after {
+        content: "";
+        position: absolute;
+        background: gold;
+      }
+
+      /* Vertical ribbon */
+      .gift::before {
+        width: 8px;
+        height: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      /* Horizontal ribbon */
+      .gift::after {
+        width: 100%;
+        height: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      /* --- Snowy Ground (New) --- */
+      .snow-ground {
+        width: 100%;
+        height: 80px; /* Height of the snow layer */
+        background: #e0f2f1;
+        border-top: 5px solid #c2c2c2;
+        border-radius: 50% 50% 0 0 / 100% 100% 0 0; /* Creates a wavy top edge */
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        z-index: 1; /* Below scene elements */
+        box-shadow: 0 -5px 20px rgba(255, 255, 255, 0.3);
+      }
+
+      /* --- Falling Snow Animation (New) --- */
+
+      /* Keyframes for simple vertical drop */
+      @keyframes fall {
+        to {
+          transform: translateY(100vh);
+        }
+      }
+
+      .snowflake {
+        position: absolute;
+        color: #e0f2f1;
+        font-size: 14px;
+        top: -20px; /* Start off screen */
+        pointer-events: none; /* Ignore mouse events */
+        animation-name: fall;
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="scene-elements">
+      <div class="gifts-container" id="gifts-container"></div>
+
+      <div class="tree" id="tree"></div>
+
+      <div class="snowman" id="snowman"></div>
+    </div>
+
+    <div class="snow-ground"></div>
+
+    <div id="snowfall-container"></div>
+
+    <script>
+      const tree = document.getElementById("tree");
+      const snowmanContainer = document.getElementById("snowman");
+      const giftsContainer = document.getElementById("gifts-container");
+      const snowfallContainer = document.getElementById("snowfall-container");
+
+      // --- 1. Create Tree ---
+
+      const star = document.createElement("div");
+      star.className = "star";
+      star.textContent = "⭐";
+      tree.appendChild(star);
+
+      const numTreeRows = 8;
+      for (let i = 1; i <= numTreeRows; i++) {
+        const row = document.createElement("div");
+        row.className = "row";
+        row.style.width = 20 + i * 20 + "px";
+        tree.appendChild(row);
+      }
+
+      const trunk = document.createElement("div");
+      trunk.className = "trunk";
+      tree.appendChild(trunk);
+
+      // --- 2. Create Snowman ---
+
+      const hatEmoji = document.createElement("span");
+      hatEmoji.className = "snowman-hat-emoji";
+      hatEmoji.textContent = "👒";
+      snowmanContainer.appendChild(hatEmoji);
+
+      const snowmanSizes = [50, 80, 110];
+      for (let i = 0; i < snowmanSizes.length; i++) {
+        const ball = document.createElement("div");
+        ball.className = "snow-ball";
+        ball.style.width = snowmanSizes[i] + "px";
+        ball.style.height = snowmanSizes[i] + "px";
+        snowmanContainer.appendChild(ball);
+      }
+
+      // --- 3. Create Gifts ---
+
+      const giftSpecs = [
+        [50, 50, "#c3073f"],
+        [60, 70, "#2a9d8f"],
+        [45, 45, "#1e6091"],
+        [40, 60, "#33d700"],
+      ];
+
+      giftSpecs.forEach(([width, height, color]) => {
+        const gift = document.createElement("div");
+        gift.className = "gift";
+        gift.style.width = width + "px";
+        gift.style.height = height + "px";
+        gift.style.background = color;
+
+        const bowEmoji = document.createElement("span");
+        bowEmoji.className = "gift-bow-emoji";
+        bowEmoji.textContent = "🎀";
+        gift.appendChild(bowEmoji);
+
+        giftsContainer.appendChild(gift);
+      });
+
+      // --- 4. Falling Snow Animation (New Loop) ---
+
+      const numSnowflakes = 50; // Total number of snowflakes to generate
+
+      for (let i = 0; i < numSnowflakes; i++) {
+        const flake = document.createElement("span");
+        flake.className = "snowflake";
+        flake.textContent = "❄"; // Snowflake emoji for simple snow
+
+        // Random horizontal position (0% to 100%)
+        flake.style.left = `${Math.random() * 100}vw`;
+
+        // Random animation duration (5s to 15s)
+        const duration = Math.random() * 10 + 5;
+        flake.style.animationDuration = `${duration}s`;
+
+        // Random delay so they don't all start at once
+        flake.style.animationDelay = `${Math.random() * -15}s`;
+
+        // Random opacity for depth
+        flake.style.opacity = Math.random() * 0.5 + 0.5;
+
+        snowfallContainer.appendChild(flake);
+      }
+    </script>
+  </body>
+</html>
