@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Залікова робота 2</title>
+
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="icon" type="image/x-icon" href="../images/favicon.ico" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
+    />
+  </head>
+
+  <body>
+    <header>
+      <h1>Залікова робота 2</h1>
+    </header>
+
+    <main>
+      <hr />
+
+      <a href="./index.html" target="_blank" title="Посилання на готовий сайт">
+        <img src="./res.jpg" alt="result" />
+      </a>
+
+      <section class="accordion">
+        <!-- ЧАСТИНА 1 -->
+        <div class="accordion__item">
+          <div class="accordion__header">
+            <div><span class="star">✦</span> Завдання</div>
+            <span class="acc-arrow">▶</span>
+          </div>
+
+          <div class="accordion__content">
+            <h3>Файли</h3>
+
+            <ol>
+              <li>Створіть папку з назвою <b>Залік2</b></li>
+              <li>
+                Завантажте і перемістіть в цю папку файли:
+                <ul>
+                  <li>
+                    <a href="./index.html" download>index.html</a>
+                  </li>
+                  <li>
+                    <a href="./style.css" download>style.css</a>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                Створіть файл <b>script.js</b> і правильно під'єднайте його до
+                index.html
+              </li>
+              <li>Відкрийте index.html в браузері з допомогою Live Server</li>
+            </ol>
+
+            <hr />
+
+            <h3>Створення об'єкта</h3>
+
+            <ol>
+              <li>Створіть об'єкт з назвою <b>team</b> (команда).</li>
+              <li>
+                Додайте до нього властивість <b>heroes</b>. Значення — масив
+                <b>[ ]</b>.
+              </li>
+              <li>
+                Всередині масиву додайте 4 об'єкти — для 4-х героїв, які мають
+                властивості:
+                <ul>
+                  <li>
+                    <b>name</b>: "Стів", <b>strength</b>: 6, <b>speed</b>: 5,
+                    <b>magic</b>: 2
+                  </li>
+                  <li>
+                    <b>name</b>: "Леон", <b>strength</b>: 6, <b>speed</b>: 9,
+                    <b>magic</b>: 6
+                  </li>
+                  <li>
+                    <b>name</b>: "Крімсон Кіт", <b>strength</b>: 9,
+                    <b>speed</b>: 8, <b>magic</b>: 4
+                  </li>
+                  <li>
+                    <b>name</b>: "Маріо", <b>strength</b>: 8, <b>speed</b>: 9,
+                    <b>magic</b>: 6
+                  </li>
+                </ul>
+              </li>
+              <li>
+                Далі додайте до об'єкта три методи (функції):
+                <ul>
+                  <li><b>getHeroInfo(i) {}</b></li>
+                  <li><b>getAllHeroesInfo() {}</b></li>
+                  <li><b>getAveragePower() {}</b></li>
+                </ul>
+              </li>
+              <li>
+                Реалізуйте логіку методу <b>getHeroInfo(i)</b>:
+                <ul>
+                  <li>
+                    Обирає в масиві <b>heroes</b> героя з правильним індексом
+                    <b>i</b> та зберігає у новій змінній <b>hero</b>
+                  </li>
+                  <li>
+                    <b>якщо</b> герой з таким індексом існує (<b>if (hero)</b>),
+                    повертає (<b>return</b>) рядок вигляду: <br />
+                    <b>`</b>${...}: ⚔️ сила = ${...}, 🏃 швидкість = ${...}, ✨
+                    магія = ${...}<b>`</b>,<br />
+                    підставивши замість <b>...</b> відповідні характеристики
+                    обраного героя
+                  </li>
+                  <li>
+                    <b>інакше</b>, повертає текст "Героя з таким індексом
+                    немає."
+                  </li>
+                </ul>
+              </li>
+              <li>
+                Реалізуйте логіку методу <b>getAllHeroesInfo()</b>:
+                <ul>
+                  <li>
+                    створює змінну <b>text</b> із початковим значенням
+                    <b>""</b> (порожній рядок)
+                  </li>
+                  <li>
+                    всередині циклу <b>for</b> по черзі додає до тексту
+                    інформацію про кожного героя (у форматі як в попередньому
+                    методі)
+                  </li>
+                  <li>повертає фінальний рядок тексту</li>
+                </ul>
+              </li>
+              <li>
+                Реалізуйте логіку методу <b>getAveragePower()</b>:
+                <ul>
+                  <li>
+                    створює змінну <b>sum</b> із початковим значенням <b>0</b>
+                  </li>
+                  <li>
+                    всередині циклу <b>for</b> по черзі додає до суми
+                    характеристики кожного героя (силу, швидкість і магію)
+                  </li>
+                  <li>
+                    створює змінну <b>average</b> зі значенням: сума /
+                    (кількість_героїв * 3)
+                  </li>
+                  <li>
+                    повертає текст `Середній рівень здібностей героїв:
+                    ${average}`
+                  </li>
+                </ul>
+              </li>
+            </ol>
+
+            <hr />
+
+            <h3>Функції для виводу результатів</h3>
+
+            <p>Поза об'єктом:</p>
+            <ol>
+              <li>
+                створіть змінну <b>result</b> та збережіть в ній елемент з
+                <b>id="result"</b>
+              </li>
+              <li>
+                створіть функцію <b>showHero(i)</b>, яка змінює внутрішній текст
+                <b>result</b> на <b>team.getHeroInfo(i)</b>
+              </li>
+              <li>
+                створіть функцію <b>showAllHeroes()</b>, яка змінює внутрішній
+                текст <b>result</b> на <b>team.getAllHeroesInfo()</b>
+              </li>
+              <li>
+                створіть функцію <b>showAveragePower()</b>, яка змінює
+                внутрішній текст <b>result</b> на <b>team.getAveragePower()</b>
+              </li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- ЧАСТИНА 2 -->
+        <div class="accordion__item">
+          <div class="accordion__header">
+            <div><span class="star">✧</span> Підказка</div>
+            <span class="acc-arrow">▶</span>
+          </div>
+
+          <div class="accordion__content">
+            <pre><code>const marvel = {
+  characters: [
+    { name: "Thor", surname: "Odinson", age: 1047 },
+    { name: "Loki", surname: "Laufeyson", age: 1046 },
+    { name: "Peter", surname: "Parker", age: 16 },
+  ],
+
+  getFullName(i) {
+    const character = this.characters[i];
+    return `${character.name} ${character.surname}`;
+  },
+
+  getAllNames() {
+    let text = "";
+
+    for (let i = 0; i < this.characters.length; i++) {
+      const character = this.characters[i];
+      text += `${character.name}, `;
+    }
+
+    return text;
+  },
+
+  getAverageAge() {
+    let sum = 0;
+
+    for (let i = 0; i < this.characters.length; i++) {
+      const character = this.characters[i];
+      sum += character.age;
+    }
+
+    return `Average age: ${sum / this.characters.length}`;
+  },
+};
+
+function printFullName(i) {
+  console.log(marvel.getFullName(i));
+}
+
+function printAllNames() {
+  console.log(marvel.getAllNames());
+}
+
+function printAverageAge() {
+  console.log(marvel.getAverageAge());
+}
+
+printFullName(0);
+printAllNames();
+printAverageAge();
+</code></pre>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="../script.js"></script>
+  </body>
+</html>

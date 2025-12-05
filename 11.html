@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Arcade Hero Manager</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* ===========================
+           НАЛАШТУВАННЯ ТЕМИ
+        =========================== */
+      :root {
+        /* Фон */
+        --bg: #0a1030;
+        --panel: #0d1440;
+        --panel-alt: #102159;
+        --code-bg: #0e1a4d;
+
+        /* Текст */
+        --text-main: #d6ecff;
+        --text-soft: #a9dcff;
+        --title: #78c7ff;
+
+        /* Акценти */
+        --accent: #4fa7ff; /* Блакитний */
+        --accent-pop: #ffcc00; /* Жовтий */
+        --accent-red: #ff4757; /* Червоний */
+
+        /* Ефекти */
+        --shadow-accent: rgba(79, 167, 255, 0.4);
+        --title-glow: rgba(120, 199, 255, 0.6);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background-color: var(--bg);
+        color: var(--text-main);
+        font-family: Arial, sans-serif;
+        padding-bottom: 20px;
+      }
+
+      /* --- ЗАГОЛОВОК --- */
+      header {
+        text-align: center;
+        font-family: "Press Start 2P";
+        margin-top: 30px;
+        margin-bottom: 40px;
+      }
+
+      header h2 {
+        color: var(--accent-pop); /* Жовтий заголовок */
+        text-shadow: 4px 4px 0px #ff4757; /* Тінь */
+        line-height: 1.5;
+        font-size: 28px;
+        margin: 0;
+      }
+
+      main {
+        width: 90%;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      h3 {
+        font-family: "Press Start 2P";
+        color: var(--accent);
+        margin-bottom: 15px;
+        font-size: 16px;
+        margin-top: 40px;
+        text-shadow: 0 0 5px var(--shadow-accent);
+      }
+
+      /* --- КАРТИНКИ (Збільшені) --- */
+      .hero-gallery {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+        margin-bottom: 25px;
+      }
+
+      .hero-wrapper {
+        width: 190px; /* Збільшив розмір */
+        cursor: pointer;
+        text-align: center;
+        transition: transform 0.2s;
+      }
+
+      img {
+        width: 100%;
+        height: 190px; /* Квадратні картинки */
+        object-fit: cover;
+        border: 4px solid var(--panel-alt);
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        transition: all 0.2s ease;
+      }
+
+      .hero-name {
+        font-family: "Press Start 2P";
+        font-size: 12px;
+        margin-top: 15px;
+        color: var(--text-soft);
+        text-transform: uppercase;
+      }
+
+      /* Ефект наведення на картку */
+      .hero-wrapper:hover {
+        transform: translateY(-5px);
+      }
+      .hero-wrapper:hover img {
+        border-color: var(--accent-pop);
+        box-shadow: 0 0 20px var(--accent-pop);
+      }
+      .hero-wrapper:hover .hero-name {
+        color: var(--accent-pop);
+      }
+
+      /* --- ВЕСЕЛІ КНОПКИ --- */
+      .controls {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+
+      button {
+        background: linear-gradient(
+          180deg,
+          #4fa7ff 0%,
+          #2e86de 100%
+        ); /* Градієнт */
+        color: white;
+        border: none;
+        border-bottom: 5px solid #1e5a9e; /* 3D ефект знизу */
+        border-radius: 10px;
+        padding: 18px 25px;
+        font-family: "Press Start 2P";
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.1s;
+        text-shadow: 1px 1px 0 #000;
+      }
+
+      /* Друга кнопка іншого кольору */
+      button.btn-calc {
+        background: linear-gradient(180deg, #ff9f43 0%, #ee5253 100%);
+        border-bottom: 5px solid #b33939;
+      }
+
+      button:hover {
+        filter: brightness(1.1);
+        transform: translateY(-2px);
+      }
+
+      button:active {
+        border-bottom: 0px solid; /* Прибираємо низ при натисканні */
+        transform: translateY(5px); /* Кнопка йде вниз */
+      }
+
+      /* --- ЕКРАН ВИВОДУ (КОНСОЛЬ) --- */
+      pre {
+        margin: 0;
+      }
+
+      code {
+        display: block;
+        padding: 20px;
+        background: var(--code-bg);
+        border: 4px solid var(--accent);
+        border-radius: 10px;
+        font-family: "Fira Code", monospace;
+        color: var(--text-main);
+        white-space: pre-wrap;
+        min-height: 120px;
+        font-size: 16px;
+        box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h2>🕹️ МЕНЕДЖЕР ГЕРОЇВ</h2>
+    </header>
+
+    <main>
+      <h3>1. ОБЕРИ БІЙЦЯ:</h3>
+
+      <div class="hero-gallery">
+        <div class="hero-wrapper" onclick="showHero(0)">
+          <img
+            src="https://www.jimbo.cz/data/tmp/3/2/213532_3.jpg"
+            alt="Стів"
+          />
+          <div class="hero-name">Стів</div>
+        </div>
+
+        <div class="hero-wrapper" onclick="showHero(1)">
+          <img
+            src="https://youtooz.com/cdn/shop/files/0000000000_4f803aa2-dced-49d6-9b4a-12ec0fd80273.png"
+            alt="Леон"
+          />
+          <div class="hero-name">Леон</div>
+        </div>
+
+        <div class="hero-wrapper" onclick="showHero(2)">
+          <img
+            src="https://static.wikia.nocookie.net/fortnite/images/d/d7/Meowscles_-_Outfit_-_Fortnite.png"
+            alt="Крімсон Кіт"
+          />
+          <div class="hero-name">Кіт</div>
+        </div>
+
+        <div class="hero-wrapper" onclick="showHero(3)">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/ru/1/15/Mario2small.jpg"
+            alt="Маріо"
+          />
+          <div class="hero-name">Маріо</div>
+        </div>
+      </div>
+
+      <h3>2. ПАНЕЛЬ УПРАВЛІННЯ:</h3>
+      <div class="controls">
+        <button onclick="showAllHeroes()">📋 СПИСОК ВСІХ</button>
+        <button class="btn-calc" onclick="showAveragePower()">
+          ⚡ СЕРЕДНЯ СИЛА
+        </button>
+      </div>
+
+      <h3>3. РЕЗУЛЬТАТ:</h3>
+      <pre><code id="game-screen">🖥️ Система готова...
+Натисни на героя або кнопку вище!</code></pre>
+    </main>
+
+    <script>
+      // --- JAVASCRIPT (Простий і зрозумілий) ---
+
+      let team = {
+        heroes: [
+          { name: "Стів", strength: 6, speed: 5, magic: 2 },
+          { name: "Леон", strength: 6, speed: 9, magic: 6 },
+          { name: "Крімсон Кіт", strength: 9, speed: 9, magic: 4 },
+          { name: "Маріо", strength: 8, speed: 9, magic: 6 },
+        ],
+
+        // 1. Інфо про одного героя
+        getHeroInfo: function (index) {
+          let h = this.heroes[index];
+
+          if (h) {
+            // Багато емодзі для веселощів
+            return (
+              "🎯 ГЕРОЯ ОБРАНО: " +
+              h.name +
+              "\n" +
+              "==========================\n" +
+              "  💪 СИЛА:      " +
+              h.strength +
+              "\n" +
+              "  🏃 ШВИДКІСТЬ: " +
+              h.speed +
+              "\n" +
+              "  ✨ МАГІЯ:     " +
+              h.magic +
+              "\n" +
+              "==========================\n" +
+              "  😎 Статус: Готовий до бою!"
+            );
+          } else {
+            return "🚫 ПОМИЛКА: Героя не знайдено!";
+          }
+        },
+
+        // 2. Список всіх (Цикл)
+        getAllHeroesInfo: function () {
+          let report = "📜 ЗВІТ ПО КОМАНДІ:\n\n";
+
+          for (let i = 0; i < this.heroes.length; i++) {
+            let h = this.heroes[i];
+            // Додаємо кожного героя з нового рядка
+            report = report + "🔹 " + h.name + " (Сила: " + h.strength + ")\n";
+          }
+
+          return report + "\n✅ Всі герої на базі!";
+        },
+
+        // 3. Середня сила (Цикл)
+        getAveragePower: function () {
+          let totalPoints = 0;
+
+          for (let i = 0; i < this.heroes.length; i++) {
+            let h = this.heroes[i];
+            totalPoints = totalPoints + h.strength + h.speed + h.magic;
+          }
+
+          let count = this.heroes.length * 3;
+          let avg = totalPoints / count;
+
+          return (
+            "🧠 ОБЧИСЛЮЮ ДАНІ...\n" +
+            "--------------------------\n" +
+            "⭐ ЗАГАЛЬНИЙ РЕЙТИНГ КОМАНДИ: " +
+            avg.toFixed(2) +
+            "\n" +
+            "🚀 Чудовий результат!"
+          );
+        },
+      };
+
+      // --- ФУНКЦІЇ ВІДОБРАЖЕННЯ (Офіціанти) ---
+
+      function updateScreen(text) {
+        document.getElementById("game-screen").innerHTML = text;
+      }
+
+      function showHero(index) {
+        let result = team.getHeroInfo(index);
+        updateScreen(result);
+      }
+
+      function showAllHeroes() {
+        let result = team.getAllHeroesInfo();
+        updateScreen(result);
+      }
+
+      function showAveragePower() {
+        let result = team.getAveragePower();
+        updateScreen(result);
+      }
+    </script>
+  </body>
+</html>

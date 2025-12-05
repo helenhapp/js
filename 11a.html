@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Герої гри</title>
+    <style>
+      body {
+        background: #f7f7f7;
+        padding: 20px;
+      }
+      h1 {
+        margin-bottom: 40px;
+      }
+      .heroes {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+      .heroes img {
+        width: 150px;
+        height: 160px;
+        border-radius: 10px;
+        border: 1px solid black;
+      }
+      .heroes img:hover {
+        transform: scale(1.05);
+        border-color: #4caf50;
+      }
+      button {
+        margin: 5px;
+        padding: 10px 20px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      #output {
+        margin-top: 20px;
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🛡️ Клікни на героя</h1>
+
+    <div class="heroes">
+      <img
+        src="https://www.jimbo.cz/data/tmp/3/2/213532_3.jpg?1678699868_2"
+        alt="Стів"
+        onclick="showHero(0)"
+      />
+      <img
+        src="https://youtooz.com/cdn/shop/files/0000000000_4f803aa2-dced-49d6-9b4a-12ec0fd80273.png?v=1737766588"
+        alt="Леон"
+        onclick="showHero(1)"
+      />
+      <img
+        src="https://static.wikia.nocookie.net/fortnite/images/d/d7/Meowscles_-_Outfit_-_Fortnite.png/revision/latest?cb=20200509144639"
+        alt="Крімсон Кіт"
+        onclick="showHero(2)"
+      />
+      <img
+        src="https://upload.wikimedia.org/wikipedia/ru/1/15/Mario2small.jpg"
+        alt="Маріо"
+        onclick="showHero(3)"
+      />
+    </div>
+
+    <button onclick="showAllHeroes()">Показати всіх героїв</button>
+    <button onclick="showAveragePower()">Середня сила героїв</button>
+
+    <div id="output"></div>
+
+    <script>
+      let team = {
+        heroes: [
+          { name: "Стів", strength: 6, speed: 5, magic: 2 },
+          { name: "Леон", strength: 6, speed: 9, magic: 6 },
+          { name: "Крімсон Кіт", strength: 9, speed: 9, magic: 4 },
+          { name: "Маріо", strength: 8, speed: 9, magic: 6 },
+        ],
+
+        getHeroInfo: function (index) {
+          let h = this.heroes[index];
+          if (h) {
+            return `${h.name} — Сила: ${h.strength}, Швидкість: ${h.speed}, Магія: ${h.magic}`;
+          } else {
+            return "Героя не знайдено.";
+          }
+        },
+
+        getAllHeroesInfo: function () {
+          let info = "";
+          this.heroes.forEach((h) => {
+            info += `${h.name} — Сила: ${h.strength}, Швидкість: ${h.speed}, Магія: ${h.magic}<br>`;
+          });
+          return info;
+        },
+
+        getAveragePower: function () {
+          let total = 0;
+          this.heroes.forEach((h) => {
+            total += h.strength + h.speed + h.magic;
+          });
+          let avg = total / (this.heroes.length * 3);
+          return `Середній рівень здібностей героїв: ${avg.toFixed(2)}`;
+        },
+      };
+
+      function showOutput(content) {
+        document.getElementById("output").innerHTML = content;
+      }
+
+      function showHero(index) {
+        let result = team.getHeroInfo(index);
+        showOutput(result);
+      }
+
+      function showAllHeroes() {
+        let result = team.getAllHeroesInfo();
+        showOutput(result);
+      }
+
+      function showAveragePower() {
+        let result = team.getAveragePower();
+        showOutput(result);
+      }
+    </script>
+  </body>
+</html>
