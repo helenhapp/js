@@ -158,4 +158,8 @@ button:active {
   button {
     width: 100%;
   }
+
+  #result {
+    min-height: 200px;
+  }
 }
